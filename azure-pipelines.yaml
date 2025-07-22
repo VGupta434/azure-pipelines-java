@@ -62,4 +62,6 @@ stages:
               pwd
               echo "Current directory contents:"
               ls -lrt $(Pipeline.Workspace)
+              echo "contents of source directory:"
+              ls -lrt $(Pipeline.Workspace)/s/
             displayName: 'Deploy Script'
