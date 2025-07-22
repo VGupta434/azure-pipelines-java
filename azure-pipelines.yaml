@@ -57,5 +57,9 @@ stages:
           steps:
           - script: |
               echo "Deploying to development environment..."
-              ls -lrt 
+              pwd
+              cd $(Pipeline.Workspace)
+              pwd
+              echo "Current directory contents:"
+              ls -lrt $(Pipeline.Workspace)
             displayName: 'Deploy Script'
