@@ -1,0 +1,48 @@
+trigger:
+- main
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: CI
+    displayName: 'Continuous Integration'
+    strategy:
+      matrix:
+        linux:
+          imageName: 'ubuntu-latest'
+        windows:
+          imageName: 'windows-latest'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+        goals: 'clean package'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'target'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Build
+  jobs:
+  - job: DeployToDevelopment
+    displayName: 'Deploy to Development Environment'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Deploying to development environment..."
+      displayName: 'Deploy Script'
