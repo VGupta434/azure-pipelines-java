@@ -10,10 +10,12 @@ stages:
       matrix:
         linux:
           imageName: 'ubuntu-latest'
+          artifactName: 'linuxArtifact'
         windows:
           imageName: 'windows-latest'
+          artifactName: 'windowsArtifact'
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: $(imageName)
     steps:
     - task: Maven@4
       inputs:
@@ -32,7 +34,7 @@ stages:
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: 'target'
-        ArtifactName: 'drop'
+        ArtifactName: $(artifactName)
         publishLocation: 'Container'
 
 - stage: Deploy
@@ -53,5 +55,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - script: echo "Deploying to development environment..."
+          - script: |
+              echo "Deploying to development environment..."
+              ls -lrt 
             displayName: 'Deploy Script'
